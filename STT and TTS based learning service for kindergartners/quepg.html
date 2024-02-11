@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet">
+    <title>Quiz App</title>
+    
+    <style>
+        * {
+            padding-top: 30px;
+        }
+        #quiz-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #d6e0b0;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        #progress-container {
+            width: 100%;
+            background-color: #ccc;
+            height: 20px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        #progress-bar {
+            background-color: #4CAF50; /* Add background color here */
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+        }
+        #answer-container {
+            margin-top: 10px;
+        }
+        #user-answer {
+            padding: 5px;
+            font-size: 16px;
+            width: 40px;
+            text-transform: uppercase;
+        }
+        #button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .quiz-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #score-message {
+            font-size: 20px;
+            text-align: center;
+            display: none;
+        }
+        .fa-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="quiz-container">
+        <center><h1>Learn with us</h1></center>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div class="" style="text-align: end;">
+            <i class="fa fa-volume-up" style='font-size:26px'></i>
+        </div>
+        <div id="question-container">
+            <p class="question"></p>
+            
+        </div>
+        
+        <div id="answer-container">
+            <label for="user-answer">Enter the correct letter: </label>
+            <input type="text" id="user-answer" maxlength="2">
+        </div>
+        <div id="button-container">
+            <button id="prev-button" class="quiz-button">Previous</button>
+            <button id="next-button" class="quiz-button">Next</button>
+        </div>
+        
+        <p id="score-message"></p>
+    </div>
+
+    <script>
+       
+        const questions = [
+            {
+                question: "Type A..?",
+                answer: "A"||"a"
+            },{
+                question: "Type B..?",
+                answer: "B"||"b"
+            },{
+                question: "Type C..?",
+                answer: "C"||"c"
+            }      
+            // Add more questions here
+        ];
+            
+        const progressBar = document.getElementById('progress-bar');
+        const questionContainer = document.getElementById('question-container');
+        const questionText = questionContainer.querySelector('.question');
+        const answerInput = document.getElementById('user-answer');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const scoreMessage = document.getElementById('score-message');
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function displayQuestion(questionIndex) {
+            const question = questions[questionIndex];
+            questionText.textContent = question.question;
+            answerInput.value = "";
+
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const percentComplete = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = percentComplete + '%';
+        }
+
+        displayQuestion(currentQuestion);
+
+        prevButton.addEventListener('click', () => {
+            currentQuestion = Math.max(0, currentQuestion - 1);
+            displayQuestion(currentQuestion);
+        });
+
+        nextButton.addEventListener('click', () => {
+            const userAnswer = answerInput.value.trim().toUpperCase();
+            const question = questions[currentQuestion];
+
+            if (userAnswer === question.answer) {
+                score++;
+            }
+
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                displayQuestion(currentQuestion);
+            } else {
+                questionContainer.innerHTML = <p>Your Score: ${score}/${questions.length}</p>;
+                answerInput.style.display = "none";
+                prevButton.style.display = "none";
+                nextButton.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

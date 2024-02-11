@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>parentpg</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+        .container{
+            width: 100%;
+            min-height: 100vh;
+            background: #8cbdf58c;
+            color: #000000;
+            padding-top: 4%;
+            padding-left: 10%;
+        }
+        .container h1 {
+            font-size: 50px;
+            /* text-align: center; */
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-style: italic;
+            animation-duration: 8s;
+            animation-name: slidein;
+            animation-iteration-count: infinite;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        @keyframes slidein {
+        0% {
+            margin-left: 0%;
+        }
+        50% {
+            margin-left: 300px;
+        }
+        100% {
+            margin-left: 0%;
+        }
+        }
+        .container h2{
+            display: flex;
+            align-items: center;
+            font-size: 35px;
+            font-weight: 600;
+        }
+        .container h2 img{
+            width: 40px;
+            margin-right: 5px;
+        }
+        .container button img{
+            width: 25px;
+            margin-right: 8px;
+        }
+        .container button{
+            display: flex;
+            align-items: center;
+            background: linear-gradient(#4e66f4, #3564ef);
+            color: #fff;
+            font-size: 16px;
+            outline: 0;
+            border: 0;
+            border-radius: 40px;
+            padding: 15px 25px;
+            margin: 30px 0 20px;
+            cursor: pointer;
+        }
+        .input-box{
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            min-height: 150px;
+            background: #fff;
+            color: #333;
+            padding: 20px;
+            margin: 20px 0;
+            outline: none;
+            border-radius: 5px;
+            border-color: #060606;
+            border-block-width: 5px;
+        }
+        .input-box img{
+            width: 25px;
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+        <h1>Welcome</h1>
+        <h2> <img src="https://clickup.com/blog/wp-content/uploads/2020/01/note-taking.png"> Add New Concepts Here!! </h2>
+        <button class="btn" > <img src="https://cdn-icons-png.flaticon.com/512/6324/6324826.png"> Add On </button>
+        <div class="notes-container">
+            
+            <script>
+            const notesContainer = document.querySelector(".notes-container");
+                const createBtn = document.querySelector(".btn");
+                let notes = document.querySelectorAll(".input-box");
+                
+                function updateStorage() {
+                    // You have a typo in innerHTML and need to pass a key and value to localStorage.setItem.
+                    localStorage.setItem("notes", notesContainer.innerHTML);
+                }
+                
+                createBtn.addEventListener("click", () => {
+                    let inputBox = document.createElement("p");
+                    let img = document.createElement("img");
+                    inputBox.className = "input-box";
+                    inputBox.setAttribute("contenteditable", "true");
+                    img.src = "https://cdn-icons-png.flaticon.com/512/3334/3334328.png";
+                    // Append the image to the paragraph element and then append the paragraph to the notesContainer.
+                    inputBox.appendChild(img);
+                    notesContainer.appendChild(inputBox);
+                    // Update localStorage when a new note is created.
+                    updateStorage();
+                });
+                
+                notesContainer.addEventListener("click", function (e) {
+                    if (e.target.tagName === "IMG") {
+                        e.target.parentElement.remove();
+                        // Update localStorage when a note is removed.
+                        updateStorage();
+                    }
+                });
+                
+                // Load notes from localStorage when the page loads.
+                window.addEventListener("load", () => {
+                    const storedNotes = localStorage.getItem("notes");
+                    if (storedNotes) {
+                        notesContainer.innerHTML = storedNotes;
+                    }
+                });
+                
+                </script>
+            <!-- <p contenteditable="true" class="input-box">
+                <img src="https://cdn-icons-png.flaticon.com/512/3334/3334328.png" >
+            </p> 
+            <button id="play">Play</button>
+             <script>
+                 let play = document.getElementById("play");
+                     function playMusic() {
+                      let audio = new Audio("audio.mp3");
+                      audio.play()
+                   }
+                   play.addEventListener("click", playMusic);
+            </script>  -->
+        </div>
+    </div>
+
+</body>
+</html>

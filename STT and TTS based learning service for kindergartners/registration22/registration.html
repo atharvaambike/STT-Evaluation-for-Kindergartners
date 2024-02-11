@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Registration</title>
+            <link rel="stylesheet" type="text/css" href="style.css">
+        </head>
+        <body>
+            <div class="container">
+                    <h2>Registration</h2>
+                        <?php
+                            if ($_SERVER["REQUEST_METHOD"] == "POST") {                                
+                            $username = $_POST["username"];
+                            $password = $_POST["password"];
+                            $password2 = $_POST["password2"];
+                            $name = $_POST["name"];
+                            $email = $_POST["email"];
+                            $contact = $_POST["contact"];
+                            $age = $_POST["age"];
+
+                            if ($password !== $password2) {
+                                echo "<p>Passwords do not match.</p>";
+                            } else {
+                                $data = [
+                                    "username" => $username,
+                                    "password" => password_hash($password, PASSWORD_DEFAULT),
+                                    "name" => $name,
+                                    "email" => $email,
+                                    "contact" => $contact,
+                                    "age" => $age,
+                                ];
+
+                                // Include the data insertion script
+                                include 'insert_data.php';
+                            }
+                        }
+                    ?>
+            <form method="post" action="insert_data.php" id="registrationForm">
+                <!-- Your existing form fields -->
+                <input type="text" name="username" id="username" placeholder="Username" required>
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <input type="password" name="password2" id="password2" placeholder="Re-enter Password" required>
+                <input type="text" name="name" id="name" placeholder="Full Name" required>
+                <input type="email" name="email" id="email" placeholder="Email" required>
+                <input type="text" name="contact" id="contact" placeholder="Contact Number" required>
+                <input type="number" name="age" id="age" placeholder="Age" required>
+                <button type="submit">Register</button>
+            </form>
+            <!-- Your existing HTML content -->
+            <p id="message"></p>
+            <a href="dashboard.html" class="btn">Back to Dashboard</a>
+            </div>
+        <script src="script.js"></script>
+        </body>
+    </html>

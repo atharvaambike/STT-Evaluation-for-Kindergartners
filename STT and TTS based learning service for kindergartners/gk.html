@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Quiz for Kids</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <style>
+        * {
+            padding-top: 30px;
+            
+        }
+    
+        #quiz-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #d6e0b0;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    
+        #progress-container {
+            width: 100%;
+            background-color: #ccc;
+            height: 20px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    
+        #progress-bar {
+            background-color: #4CAF50;
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+            margin-bottom: 0px;
+        }
+    
+        #answer-container {
+            margin-top: 10px;
+        }
+    
+        #user-answer {
+            padding: 5px;
+            font-size: 16px;
+            width: 40px;
+            text-transform: uppercase;
+        }
+    
+        #button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+    
+        .quiz-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        #score-message {
+            font-size: 20px;
+            text-align: center;
+            display: none;
+        }
+    
+        .fa-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #voice-container{
+            text-align: center;
+        }
+
+    
+        #voice-container img {
+            width: 80px; /* Adjust the width as needed */
+            height: 70px; /* Adjust the height as needed */
+            cursor: pointer;
+        }
+    </style>
+    
+</head>
+<body>
+    <div id="quiz-container">
+        <center><h1>Learn with us</h1></center>
+        <!-- <div id="progress-container"></div> -->
+        <div id="progress-bar"></div>
+        <div id="question-container">
+            <p class="question"></p>
+        </div>
+        <div id="button-container">
+            <button id="prev-button" class="quiz-button">Previous</button>
+            <button id="next-button" class="quiz-button">Next</button>
+        </div>
+        <p id="score-message"></p>
+
+        <!-- Voice-related elements -->
+        <div id="voice-container">
+            <h1>Say: <span id="expected-letter"></span></h1>
+            <h2>You Spoke: <span id="user-spoken"></span></h2>
+            <img src="images/mic_icon.png" alt="Microphone" onclick="startListening()">
+            <img src="images/mute.png" alt="Mute-Microphone" onclick="stopListening()">
+            <!-- <button onclick="stopListening()">Stop Listening</button> -->
+            <p id="evaluation-results"></p>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+        {
+        "question": "WHAT COLOR IS THE SKY? Blue",
+        "answer": "BLUE"
+    },
+    {
+        "question": "WHAT DO YOU EAT IN MORNING?",
+        "answer": "BREAKFAST"
+    },
+    {
+        "question": "WHAT DO YOU SAY WHEN YOU DO A MISTAKE?",
+        "answer": "SORRY"
+    },
+    {
+        "question": "IN WHAT VESSEL WE DRINK WATER?",
+        "answer": "GLASS"
+    },
+    {
+        "question": "WHAT DO YOU SAY WHEN SOMEONE HELPS YOU?",
+        "answer": "THANK YOU"
+    }
+        ];
+
+        const progressBar = document.getElementById('progress-bar');
+        const questionContainer = document.getElementById('question-container');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const scoreMessage = document.getElementById('score-message');
+
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-In';
+
+        const synth = window.speechSynthesis;
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function displayQuestion(questionIndex) {
+            const question = questions[questionIndex];
+            questionContainer.textContent = question.question;
+
+            // Display the expected letter for voice recognition
+            document.getElementById('expected-letter').textContent = question.answer;
+            document.getElementById('user-spoken').textContent = ""; // Clear the user-spoken content
+
+            // Speak out the question
+            speak(question.question);
+
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const percentComplete = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = percentComplete + '%';
+        }
+
+        prevButton.addEventListener('click', () => {
+            currentQuestion = Math.max(0, currentQuestion - 1);
+            displayQuestion(currentQuestion);
+        });
+
+        nextButton.addEventListener('click', () => {
+            const question = questions[currentQuestion];
+
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                displayQuestion(currentQuestion);
+            } else {
+                questionContainer.innerHTML = `<p>Your Score: ${score}/${questions.length}</p>`;
+                prevButton.style.display = "none";
+                nextButton.style.display = "none";
+            }
+        });
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript.trim().toUpperCase();
+            const question = questions[currentQuestion];
+
+            // Display what the user spoke
+            document.getElementById('user-spoken').textContent = transcript;
+
+            // Check if the user's speech matches the expected answer
+            if (transcript === question.answer.toUpperCase()) {
+                score++;
+                document.getElementById('evaluation-results').textContent = 'Correct!';
+            } else {
+                document.getElementById('evaluation-results').textContent = 'Incorrect. Please try again.';
+            }
+        };
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.4;
+            synth.speak(utterance);
+        }
+
+        function startListening() {
+            recognition.start();
+        }
+
+        function stopListening() {
+            recognition.stop();
+        }
+
+        // Initial display
+        displayQuestion(currentQuestion);
+    </script>
+</body>
+</html>

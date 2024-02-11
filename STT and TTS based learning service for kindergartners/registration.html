@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+ 
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        width: 350px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+        color: #333;
+    }
+
+    input {
+        width: 100%;
+        padding: 6px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    #message {
+        margin: 10px 0;
+        color: #333;
+    }
+
+    a.btn {
+        display: inline-block;
+        text-decoration: none;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    a.btn:hover {
+        background-color: #555;
+    }
+</style>
+
+
+</head>
+<body>
+    <div class="container">
+        <h2>Registration</h2>
+        <form id="registrationForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="password" id="password2" placeholder="Re-enter Password" required>
+            <input type="text" id="name" placeholder="Full Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="contact" placeholder="Contact Number" required>
+            <input type="number" id="age" placeholder="Age" required>
+            <button type="submit">Register</button>
+        </form>
+        <p id="message"></p>
+        <a href="login.html" class="btn">Back to Dashboard</a>
+    </div>
+
+    <script >
+        document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('registrationForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const password2 = document.getElementById('password2').value;
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const contact = document.getElementById('contact').value;
+        const age = document.getElementById('age').value;
+    
+        // Check if passwords match
+        if (password !== password2) {
+            document.getElementById('message').innerText = 'Passwords do not match';
+            return;
+        }
+    
+        fetch('insert_data.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                password,
+                name,
+                email,
+                contact,
+                age,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('message').innerText = 'Registration Successful!';
+            } else {
+                document.getElementById('message').innerText = 'Registration Failed. Please try again.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('message').innerText = 'An error occurred.';
+        });
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Your JavaScript code here
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        fetch('login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                password,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('message').innerText = 'Login Successful!';
+            } else {
+                document.getElementById('message').innerText = 'Login Failed. Please check your credentials.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('message').innerText = 'An error occurred during login.';
+        });
+    });
+});
+</script>
+
+</body>
+</html>
